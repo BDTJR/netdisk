@@ -46,6 +46,9 @@
 #include<openssl/md5.h>
 using namespace std;
 
+#define IP "192.168.3.8"
+#define PORT "2000"
+#define ABSPATH "/mnt/e//Netdisk/server/home"
 #define MAXNUM 100
 #define THREADNUM 5
 #define VirtualPath "../virtualFile"
