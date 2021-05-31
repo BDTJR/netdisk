@@ -17,6 +17,7 @@ public:
 			pthread_create(&pthid[i], NULL, threadTask, this);
 		}
 		cout << "Thread pool start success..." << endl;
+		sleep(1);
 		state = 1;
 	}
 	pthread_t pthid[THREADNUM + 1]; //线程ID

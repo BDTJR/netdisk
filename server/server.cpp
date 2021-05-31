@@ -5,19 +5,21 @@
 #include "MySQLInterface.h"
 
 void* supervise(void *p);
-void serverInit(char* conf,char* ip,char* port,char* absPath);
+
 int fileExist(char* curPath, char* fileName, char fileType);
 
 Factory f;
 ConnectedClients clients;
 
 int main(int argc, char* argv[]) {
-	  countArgc(argc, 2);
+	
  
 	  char ip[20] = {0};
 	  char port[10] = {0};
 	  char absPath[64] = {0};
-	  serverInit(argv[1], ip, port, absPath);
+	  strcpy(ip, IP);
+    strcpy(port, PORT);
+    strcpy(absPath, ABSPATH);
 
     f.startThreadPool(); //开启线程池, 线程进行put、get任务和监督任务
     int listenfd = tcpInit(ip, port); //TCP初始化
@@ -51,10 +53,10 @@ int main(int argc, char* argv[]) {
                 	return -1;
                 }
                 //成功与服务端连接，写入log
-                printf("client %s %d connected.\n", inet_ntoa(client.sin_addr), ntohs(client.sin_port));
+                cout << "client" << inet_ntoa(client.sin_addr) <<  ntohs(client.sin_port) << "connected." << endl;
                 tim = time(NULL);
                 ctime_r(&tim, timeBuf);
-                sprintf(logBuf, "client %s %d connected.\n", inet_ntoa(client.sin_addr), ntohs(client.sin_port), timeBuf);
+                sprintf(logBuf, "client %s %d connected %s.\n", inet_ntoa(client.sin_addr), ntohs(client.sin_port), timeBuf);
                 write(logfd, logBuf, strlen(logBuf));
                 //用户数量已满
                 if (clients.getCurrentClients() >= MAXNUM) {
@@ -299,27 +301,3 @@ void* supervise(void *p){
     }
 }
 
-
-void serverInit(char* conf,char* ip,char* port,char* absPath){
-    int fd=open(conf, O_RDONLY);
-    char buf[128]={0};
-    read(fd,buf,sizeof(buf));
-    close(fd);
-    int cnt=0;
-    int start=0;
-    while(buf[start+cnt]!='\n'){
-        cnt++;
-    }
-    strncpy(ip,buf,cnt);
-    start=start+cnt+1;
-    cnt=0;
-    while(buf[start+cnt]!='\n'){
-        cnt++;
-    }
-    strncpy(port,buf+start,cnt);
-    start=start+cnt+1;
-    while(buf[start+cnt]!='\n'){
-        cnt++;
-    }
-    strncpy(absPath,buf+start,cnt);
-}
